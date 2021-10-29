@@ -11,7 +11,7 @@ const handler: NextApiHandler = async (req, res) => {
             await postBorrower(req, res)
             break;
         default:
-            res.status(400).json({ message: req.method + " is not a valid method." })
+            res.status(400).json({ message: req.method + " is not a valid method for this endpoint." })
     }
 }
 

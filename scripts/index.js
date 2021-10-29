@@ -4,13 +4,13 @@ async function start() {
     const borrowerCsvFile = "./data/borrowers.csv"
     // db formation
     console.log("Step 1 | DB Formation")
-    await require('./migrate').migrate()
+    await require('./migrate.js').migrate()
     // db population
     console.log(`\nStep 2.1 | DB Book + Author Population\n`)
-    await require('./initialize').populateBooksAndAuthors(booksAuthorCsvFile, "\t")
+    await require('./initialize.js').populateBooksAndAuthors(booksAuthorCsvFile, "\t")
 
     console.log(`\nStep 2.2 | DB Borrower Population\n`)
-    await require('./initialize').populateBorrowers(borrowerCsvFile, ",")
+    await require('./initialize.js').populateBorrowers(borrowerCsvFile, ",")
     // end process
     process.exit()
 }

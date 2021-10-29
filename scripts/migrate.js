@@ -1,14 +1,29 @@
 const { query } = require('./db')
 
 const createBorrower = `
+    CREATE TABLE BORROWER_seq (
+        Id INT NOT NULL AUTO_INCREMENT,
+        PRIMARY KEY (Id)
+    );
+    
     CREATE TABLE BORROWER (
-        Card_id INT NOT NULL AUTO_INCREMENT,
+        Card_id VARCHAR(8) NOT NULL DEFAULT '0',
         Bname VARCHAR(255),
         Ssn INT(9),
         Address VARCHAR(255),
         Phone INT(10),
         PRIMARY KEY (Card_id)
     );
+        
+    DELIMITER $$
+    CREATE TRIGGER borrower_card_id
+        BEFORE INSERT ON BORROWER
+        FOR EACH ROW
+    BEGIN
+        INSERT INTO BORROWER_seq VALUES (NULL);
+        SET NEW.Card_id = CONCAT('ID', LPAD(LAST_INSERT_ID(), 6, '0'));
+    END$$
+    DELIMITER ;
 `
 const createBook = `
     CREATE TABLE BOOK (
