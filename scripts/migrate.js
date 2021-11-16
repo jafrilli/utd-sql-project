@@ -1,17 +1,18 @@
 const { query } = require('./db')
 
-const createBorrower = `
+const createBorrowerP1 = `
     CREATE TABLE BORROWER_seq (
         Id INT NOT NULL AUTO_INCREMENT,
         PRIMARY KEY (Id)
     );
-    
+`
+const createBorrowerP2 = `
     CREATE TABLE BORROWER (
-        Card_id VARCHAR(8) NOT NULL DEFAULT '0',
-        Bname VARCHAR(255),
-        Ssn INT(9),
-        Address VARCHAR(255),
-        Phone INT(10),
+        Card_id VARCHAR(8) NOT NULL,
+        Bname VARCHAR(255) NOT NULL,
+        Ssn INT NOT NULL,
+        Address VARCHAR(255) NOT NULL,
+        Phone CHAR(10) NOT NULL,
         PRIMARY KEY (Card_id)
     );
         
@@ -24,6 +25,15 @@ const createBorrower = `
         SET NEW.Card_id = CONCAT('ID', LPAD(LAST_INSERT_ID(), 6, '0'));
     END$$
     DELIMITER ;
+`
+const createBorrowerP3 = `
+    CREATE TRIGGER borrower_card_id
+        BEFORE INSERT ON BORROWER
+        FOR EACH ROW
+    BEGIN
+        INSERT INTO BORROWER_seq VALUES (NULL);
+        SET NEW.Card_id = CONCAT('ID', LPAD(LAST_INSERT_ID(), 6, '0'));
+    END;
 `
 const createBook = `
     CREATE TABLE BOOK (
@@ -52,7 +62,7 @@ const createBookToLoan = `
     CREATE TABLE BOOK_LOAN (
         Loan_id INT NOT NULL AUTO_INCREMENT,
         Isbn VARCHAR(10) NOT NULL,
-        Card_id INT NOT NULL,
+        Card_id VARCHAR(8) NOT NULL,
         Date_out DATE NOT NULL,
         Due_date DATE NOT NULL,
         Date_in DATE,
@@ -73,7 +83,8 @@ const createFines = `
 
 module.exports.migrate = async () => {
     try {
-        for (const s of [createBorrower, createBook, createAuthor, createBookToAuthors, createBookToLoan, createFines]) {
+        const commands = [createBorrowerP1, createBorrowerP2, createBorrowerP3, createBook, createAuthor, createBookToAuthors, createBookToLoan, createFines]
+        for (const s of commands) {
             await query(s)
         }
         console.log("Successfully migrated database!")
