@@ -15,16 +15,6 @@ const createBorrowerP2 = `
         Phone CHAR(10) NOT NULL,
         PRIMARY KEY (Card_id)
     );
-        
-    DELIMITER $$
-    CREATE TRIGGER borrower_card_id
-        BEFORE INSERT ON BORROWER
-        FOR EACH ROW
-    BEGIN
-        INSERT INTO BORROWER_seq VALUES (NULL);
-        SET NEW.Card_id = CONCAT('ID', LPAD(LAST_INSERT_ID(), 6, '0'));
-    END$$
-    DELIMITER ;
 `
 const createBorrowerP3 = `
     CREATE TRIGGER borrower_card_id
