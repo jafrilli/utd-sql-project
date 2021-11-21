@@ -1,6 +1,6 @@
-import { isMissingBody, isMissingParams } from "@/lib/utils";
+import { isMissingBody, isMissingParams } from "lib/utils";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next"
-import { query } from "../../lib/db";
+import { query } from "../../db/";
 
 const handler: NextApiHandler = async (req, res) => {
     switch(req.method) {
@@ -30,17 +30,17 @@ const getBorrower = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const postBorrower = async (req: NextApiRequest, res: NextApiResponse) => {
     if(!isMissingBody(req, res, ["Bname", "Ssn", "Address", "Phone"])) {
-        const { Bname, Ssn, Address, Phone } = req.query
+        const { Bname, Ssn, Address, Phone } = req.body
         // get borrower given card id
         const borrowers = await query(`
             INSERT INTO BORROWER (Bname, Ssn, Address, Phone)
             VALUES (?, ?, ?, ?);
         `, [ 
             Bname.toString(), 
-            parseInt(Ssn.toString().trim()), 
+            parseInt(Ssn.toString().replace(/\D/g,'')), 
             Address.toString(), 
-            parseInt(Phone.toString().trim()) ])
-        
+            parseInt(Phone.toString().replace(/\D/g,'')) 
+        ], "INSERT")
         res.status(200).json(borrowers)
     }
 }

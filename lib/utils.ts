@@ -11,10 +11,12 @@ export function isMissingBody(req: NextApiRequest, res: NextApiResponse, require
         }
     })
     
-    res.status(400).json({
-        missing,
-        message: "You have not provided the following the request body: " + missing.join(", ")
-    })
+    if (missing.length > 0) {
+        res.status(400).json({
+            missing,
+            message: "You have not provided the following the request body: " + missing.join(", ")
+        })
+    }
 
     return missing.length != 0
 }
@@ -29,10 +31,12 @@ export function isMissingParams(req: NextApiRequest, res: NextApiResponse, requi
         }
     })
     
-    res.status(400).json({
-        missing,
-        message: "You have not provided the following the query parameters: " + missing.join(", ")
-    })
+    if (missing.length > 0) {
+        res.status(400).json({
+            missing,
+            message: "You have not provided the following the query parameters: " + missing.join(", ")
+        })
+    }
 
     return missing.length != 0
 }

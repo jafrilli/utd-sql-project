@@ -3,7 +3,7 @@
       "baseUrl": ".",
       "paths": {
         "@/components/*": ["components/*"],
-        "@/lib/*": ["lib/*"]
+        "@/lib/*": ["db/*"]
       },
       "target": "es5",
       "lib": ["dom", "dom.iterable", "esnext"],
@@ -19,7 +19,7 @@
       "isolatedModules": true,
       "jsx": "preserve"
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "db/models/borrower.js"],
     "exclude": ["node_modules"]
   }
   

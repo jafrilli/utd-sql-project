@@ -12,6 +12,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/sequelize": "^4.28.10",
     "dotenv": "^10.0.0",
     "mysql2": "^2.3.3",
     "next": "11.1.2",

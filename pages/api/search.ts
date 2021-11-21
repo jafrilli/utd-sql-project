@@ -1,6 +1,6 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next"
-import { isMissingParams } from "@/lib/utils";
-import { query } from "../../lib/db";
+import { isMissingParams } from "lib/utils";
+import { query } from "../../db/";
 
 const handler: NextApiHandler = async (req, res) => {
     switch(req.method) {

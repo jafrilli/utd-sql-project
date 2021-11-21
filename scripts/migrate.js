@@ -86,6 +86,7 @@ module.exports.migrate = async () => {
         const commands = [createBorrowerP1, createBorrowerP2, createBorrowerP3, createBook, createAuthor, createBookToAuthors, createBookToLoan, createFines]
         for (const s of commands) {
             await query(s)
+            console.log(s)
         }
         console.log("Successfully migrated database!")
     } catch (e) {
