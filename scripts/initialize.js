@@ -1,7 +1,5 @@
-const { query } = require('./db')
-const { sequelize } = require('../db')
+const { models } = require('../db')
 const csv = require('csvtojson');
-const models = sequelize.models
 
 module.exports.populateBooksAndAuthors = async (filePath, delimiter) => csv({ delimiter }).fromFile(filePath).then(async (json) => {
     for (let i = 0; i < json.length; i++) {
@@ -21,8 +19,7 @@ module.exports.populateBooksAndAuthors = async (filePath, delimiter) => csv({ de
 
         // add the books
         try {
-
-            await models.Book.create({ 
+            await models.Book.create({
                 isbn: row["ISBN10"].toString(),
                 title: row["Title"].toString()
             })
@@ -58,15 +55,6 @@ module.exports.populateBorrowers = async (filePath, delimiter) => csv({ delimite
 
         // add the borrowers
         try {
-            // await query(`
-            //     INSERT INTO BORROWER (Bname, Ssn, Address, Phone)
-            //     VALUES (?, ?, ?, ?);
-            // `, [
-            //     row["first_name"].toString() + " " + row["last_name"].toString(),
-            //     row["ssn"].toString().replace(/[^\d]/g, ""),
-            //     row["address"].toString(),
-            //     row["phone"].toString().replace(/[^\d]/g, ""),
-            // ])
             await models.Borrower.create({
                 name: row["first_name"].toString() + " " + row["last_name"].toString(),
                 ssn: row["ssn"].toString(),
@@ -84,6 +72,3 @@ module.exports.populateBorrowers = async (filePath, delimiter) => csv({ delimite
         console.log(`${i + 1}/${json.length} borrowers processed.`)
     }
 })
-
-
-

@@ -19,7 +19,7 @@
       "isolatedModules": true,
       "jsx": "preserve"
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "db/models/4_borrower.js", "db/models/2_author.js", "db/models/3_bookAuthor.js", "db/models/1_book.js"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "db/models/4_borrower.js", "db/models/2_author.js", "db/models/3_bookAuthor.js", "db/models/1_book.js", "db/index.js"],
     "exclude": ["node_modules"]
   }
   
