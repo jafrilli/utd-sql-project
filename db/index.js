@@ -31,16 +31,20 @@ fs.readdirSync(models)
         );
     })
     .forEach(file => {
-        const model = require(path.join(models, file))(sequelize, Sequelize.DataTypes);
+        const model = require(path.join(models, file))(sequelize);
+        console.log(file)
+        console.log(model)
+        console.log()
         db[model.name] = model;
-    });
+    })
 
-// run the associations
-Object.keys(db).forEach(model => {
-    if (db[model].associate) {
-        db[model].associate(db);
-    }
-});
+
+// // run the associations
+// Object.keys(db).forEach(model => {
+//     if (db[model].associate) {
+//         db[model].associate(db);
+//     }
+// });
 
 db.query = async (q, values, queryType = "SELECT") => {
     try {
@@ -52,6 +56,6 @@ db.query = async (q, values, queryType = "SELECT") => {
 }
 
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+// db.Sequelize = Sequelize;
 
 module.exports = db;
