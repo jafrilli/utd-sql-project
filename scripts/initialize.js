@@ -9,8 +9,8 @@ module.exports.populateBooksAndAuthors = async (filePath, delimiter) => csv({ de
         const book_authors = []
         for (let author of row["Author"].split(',')) {
             try {
-                book_authors.push(author)
-                await models.Author.create({ name: author })
+                const a = await models.Author.findOrCreate({ where: { name: author }})
+                book_authors.push(a[0].dataValues.authorId)
             } catch (e) {
                 // console.error(`Could not add author ${author}.`)
                 // console.error(e)
@@ -24,21 +24,20 @@ module.exports.populateBooksAndAuthors = async (filePath, delimiter) => csv({ de
                 title: row["Title"].toString()
             })
         } catch (e) {
-            console.error(`Could not add book ${row["Title"].toString()}.`)
-            console.error(e)
+            // console.error(`Could not add book ${row["Title"].toString()}.`)
+            // console.error(e)
         }
 
         // add the book_author relationships
-        for (let name of book_authors) {
+        for (let authorId of book_authors) {
             try {
-                const { authorId } = await models.Author.findOne({ where: { name } })
                 await models.BookAuthor.create({
                     authorId,
                     isbn: row["ISBN10"].toString()
                 })
             } catch (e) {
-                console.error(`Could not add book-author tuple ${row["ISBN10"].toString()}-${a.toString()}.`)
-                console.error(e)
+                // console.error(`Could not add book-author tuple ${row["ISBN10"].toString()}-${authorId}.`)
+                // console.error(e)
             }
         }
 
