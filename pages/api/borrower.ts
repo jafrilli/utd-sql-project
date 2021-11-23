@@ -1,48 +1,54 @@
 import { isMissingBody, isMissingParams } from "lib/utils";
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next"
-import { query } from "../../db/";
+import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+const sequelize = require('../../db/index')
 
 const handler: NextApiHandler = async (req, res) => {
-    switch(req.method) {
-        case 'GET':
-            await getBorrower(req, res)
+    switch (req.method) {
+        case "GET":
+            await getBorrower(req, res);
             break;
-        case 'POST':
-            await postBorrower(req, res)
+        case "POST":
+            await postBorrower(req, res);
             break;
         default:
-            res.status(400).json({ message: req.method + " is not a valid method for this endpoint." })
+            res.status(400).json({
+                messages:
+                    [req.method + " is not a valid method for this endpoint."],
+            });
     }
-}
+};
 
 const getBorrower = async (req: NextApiRequest, res: NextApiResponse) => {
-    if(!isMissingParams(req, res, ["Card_id"])) {
-        const { Card_id } = req.query
+    if (!isMissingParams(req, res, ["cardId"])) {
+        const { cardId } = req.query;
         // get borrower given card id
-        const borrowers = await query(`
-            SELECT * FROM BORROWER
-            WHERE Card_id = ?;
-        `, [ Card_id.toString() ])
-        
-        res.status(200).json(borrowers)
+        const borrower = await sequelize.models.Borrower.findOne({
+            where: { cardId: cardId.toString() },
+        })
+
+        if(borrower)
+            res.status(200).json(borrower);
+        else
+            res.status(400).json({ messages: ["Unable to find borrower with cardId " + cardId] })    
     }
-}
+};
 
 const postBorrower = async (req: NextApiRequest, res: NextApiResponse) => {
-    if(!isMissingBody(req, res, ["Bname", "Ssn", "Address", "Phone"])) {
-        const { Bname, Ssn, Address, Phone } = req.body
+    if (!isMissingBody(req, res, ["name", "ssn", "address", "phone"])) {
+        const { name, ssn, address, phone } = req.body;
         // get borrower given card id
-        const borrowers = await query(`
-            INSERT INTO BORROWER (Bname, Ssn, Address, Phone)
-            VALUES (?, ?, ?, ?);
-        `, [ 
-            Bname.toString(), 
-            parseInt(Ssn.toString().replace(/\D/g,'')), 
-            Address.toString(), 
-            parseInt(Phone.toString().replace(/\D/g,'')) 
-        ], "INSERT")
-        res.status(200).json(borrowers)
+        try {
+            const borrower = await sequelize.models.Borrower.create({
+                name: name.toString(),
+                ssn: ssn.toString(),
+                phone: phone.toString(),
+                address: address.toString(),
+            });
+            res.status(200).json(borrower);
+        } catch (e) {
+            res.status(400).json({ messages: e.errors.map(e => e.message) })
+        }
     }
-}
+};
 
-export default handler
+export default handler;

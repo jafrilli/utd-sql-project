@@ -23,6 +23,6 @@ const sequelize = new Sequelize(
 // import the models into sequelize, add them to db object
 fs.readdirSync(models)
     .filter(file => (file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'))
-    .forEach(file => require(path.join(models, file))(sequelize))
+    .forEach(file => require("./models/" + file)(sequelize))
 
 module.exports = sequelize;

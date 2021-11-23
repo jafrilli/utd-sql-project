@@ -33,7 +33,8 @@ module.exports = (sequelize) => {
         ssn: {
             type: DataTypes.CHAR(9),
             field: "Ssn",
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         phone: {
             type: DataTypes.CHAR(10),
@@ -51,8 +52,8 @@ module.exports = (sequelize) => {
         hooks: {
             beforeCreate: (borrower) => {
                 // remove all the non-numerical characters
-                borrower.ssn = borrower.ssn.replace(/\D/g, '')
-                borrower.phone = borrower.phone.replace(/\D/g, '')
+                borrower.ssn = parseInt(borrower.ssn.replace(/\D/g, ''))
+                borrower.phone = parseInt(borrower.phone.replace(/\D/g, ''))
             },
             afterCreate: (borrower) => {
                 return borrower.update({
