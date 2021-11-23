@@ -32,5 +32,8 @@ module.exports = (sequelize) => {
         },
     }, { sequelize, timestamps: false })
 
+    BookAuthor.belongsTo(sequelize.models.Book, {foreignKey: "Isbn"})
+    BookAuthor.belongsTo(sequelize.models.Author, {foreignKey: "Author_id"})
+
     return BookAuthor
 }
