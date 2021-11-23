@@ -57,5 +57,15 @@ module.exports = (sequelize) => {
         }
     }, { sequelize, timestamps: false })
 
+    Loan.getBookLoans = (isbn) => {
+        return Loan.findAll({ where: { isbn }})
+    } 
+    Loan.getActiveBookLoans = (isbn) => {
+        return Loan.findAll({ where: { isbn, dateIn: null }})
+    } 
+    Loan.getActiveBorrowerLoans = (cardId) => {
+        return Loan.findAll({ where: { cardId, dateIn: null } })
+    }
+
     return Loan
 }
