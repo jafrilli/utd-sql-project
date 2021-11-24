@@ -8,7 +8,7 @@
     );
  */
 
-const { Model, DataTypes } = require('sequelize')
+const { Model, DataTypes, Op } = require('sequelize')
 
 module.exports = (sequelize) => {
     class Fine extends Model {}
@@ -36,6 +36,25 @@ module.exports = (sequelize) => {
             defaultValue: false
         }
     }, { sequelize, timestamps: false })
+
+    Fine.getTotalUnpaidFines = async (cardId) => {
+        // get active loans associated with cardId
+        let loans = await sequelize.models.Loan.findAll({ where: {cardId}, attributes: ["loanId"] })
+        loans = loans.map(l => l.loanId)
+        // get unpaid fines
+        const fines = await sequelize.models.Fine.findAll({
+            where: {
+                loanId: { [Op.in]: loans },
+                paid: false
+            }
+        })
+        // count up and return the total fine
+        let count = 0.00
+        for(const fine of fines) {
+            count += fine.amount
+        }
+        return count
+    }
 
     return Fine
 }

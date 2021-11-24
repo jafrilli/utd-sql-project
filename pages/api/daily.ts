@@ -26,6 +26,13 @@ const getDaily = async (req: NextApiRequest, res: NextApiResponse) => {
             // get fine, if doesnt exist, create it
             const fine = await sequelize.models.Fine.findByPk(loan.loanId)
             if (!fine) await sequelize.models.Fine.create({loanId: loan.loanId})
+            // if a fine has been paid but book not returned, reset the count
+            else if (fine.paid) {
+                await sequelize.models.Fine.update(
+                    { amount: 0, paid: false },
+                    { where: { loanId: loan.loanId } }
+                );
+            }
             // update fine
             await sequelize.models.Fine.update(
                 { amount: sequelize.literal("Fine_amt + 0.25") },
