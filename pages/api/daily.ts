@@ -20,24 +20,32 @@ const getDaily = async (req: NextApiRequest, res: NextApiResponse) => {
         // get all active loans
         const loans = await sequelize.models.Loan.findAll({
             where: { dateIn: null },
+            include: [
+                {
+                    model: sequelize.models.Fine,
+                },
+            ],
         });
         // for every active loan, update fine
         for (const loan of loans) {
-            // get fine, if doesnt exist, create it
-            const fine = await sequelize.models.Fine.findByPk(loan.loanId)
-            if (!fine) await sequelize.models.Fine.create({loanId: loan.loanId})
-            // if a fine has been paid but book not returned, reset the count
-            else if (fine.paid) {
+            // if its past due date, run the fine subroutine
+            if ((loan.dueDate as Date) < new Date()) {
+                // get fine, if doesnt exist, create it
+                if (!loan.Fine)
+                    await sequelize.models.Fine.create({ loanId: loan.loanId });
+                // if a fine has been paid but book not returned, reset the count
+                else if (loan.Fine.paid) {
+                    await sequelize.models.Fine.update(
+                        { amount: 0, paid: false },
+                        { where: { loanId: loan.loanId } }
+                    );
+                }
+                // update fine
                 await sequelize.models.Fine.update(
-                    { amount: 0, paid: false },
+                    { amount: sequelize.literal("Fine_amt + 0.25") },
                     { where: { loanId: loan.loanId } }
                 );
             }
-            // update fine
-            await sequelize.models.Fine.update(
-                { amount: sequelize.literal("Fine_amt + 0.25") },
-                { where: { loanId: loan.loanId } }
-            );
         }
         res.status(200).json({ success: true });
     } catch (e) {

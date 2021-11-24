@@ -5,7 +5,7 @@ const sequelize = require("../../db/index");
 const handler: NextApiHandler = async (req, res) => {
     switch (req.method) {
         case "GET":
-            await getFine(req, res);
+            await getFines(req, res);
             break;
         default:
             res.status(400).json({
@@ -16,13 +16,26 @@ const handler: NextApiHandler = async (req, res) => {
     }
 };
 
-const getFine = async (req: NextApiRequest, res: NextApiResponse) => {
+const getFines = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!isMissingParams(req, res, ["cardId"])) {
         const { cardId } = req.query;
         try {
-            // get all active Loans linked to the list of isbns provided
-            const fine = await sequelize.models.Fine.getTotalUnpaidFines(cardId.toString())
-            res.status(200).json({fine})
+            const loans = await sequelize.models.Loan.findAll({
+                where: { cardId: cardId.toString() },
+                attributes: ["dueDate", "dateIn", "dateOut"],
+                include: [
+                    {
+                        model: sequelize.models.Book,
+                        required: true,
+                    },
+                    {
+                        model: sequelize.models.Fine,
+                        where: { paid: false },
+                        required: true,
+                    },
+                ],
+            });
+            res.status(200).json(loans);
         } catch (e) {
             console.log(e);
             res.status(400).json({

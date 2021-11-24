@@ -20,7 +20,8 @@ const postCheckout = async (req: NextApiRequest, res: NextApiResponse) => {
         const { cardId, isbn } = req.body;
         const messages = []
         const maxBooks = 3
-        const daysDue = 14
+        // set to 0 days for testing
+        const daysDue = 0
         try {
             // check if book exists
             const book = await sequelize.models.Book.findByPk(isbn.toString())

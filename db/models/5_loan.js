@@ -14,7 +14,7 @@
 const { Model, DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-    class Loan extends Model {}
+    class Loan extends Model { }
     Loan.init({
         loanId: {
             type: DataTypes.INTEGER,
@@ -57,12 +57,14 @@ module.exports = (sequelize) => {
         }
     }, { sequelize, timestamps: false })
 
+    Loan.belongsTo(sequelize.models.Book, { foreignKey: "Isbn" })
+
     Loan.getBookLoans = (isbn) => {
-        return Loan.findAll({ where: { isbn }})
-    } 
+        return Loan.findAll({ where: { isbn } })
+    }
     Loan.getActiveBookLoans = (isbn) => {
-        return Loan.findAll({ where: { isbn, dateIn: null }})
-    } 
+        return Loan.findAll({ where: { isbn, dateIn: null } })
+    }
     Loan.getActiveBorrowerLoans = (cardId) => {
         return Loan.findAll({ where: { cardId, dateIn: null } })
     }
