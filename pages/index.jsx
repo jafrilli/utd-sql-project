@@ -1,46 +1,65 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import SearchBar from '../components/SearchBar'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import LibraryPage from '../components/LibraryPage'
-import LibraryButton from '../components/LibraryButton'
 import LibraryBookItem from '../components/LibraryBookItem'
+import LibraryNavBar from '../components/LibraryNavBar'
 
 export default function Home() {
+
+  const [message, setmessage] = useState('')
+  const [page, setpage] = useState(1)
+  const router = useRouter()
+  const { s } = router.query
+
+  const [books, setbooks] = useState([])
+
+  useEffect(() => {
+    setpage(1)
+    if (s) {
+      // search
+      search(s)
+    }
+  }, [s])
+
+  useEffect(() => { }, [books])
+
+  const search = (s) => {
+    fetch(`/api/search?s=${s}&page=${page}&amount=${10}`)
+      .then(async (res) => {
+        const body = await res.json()
+        if (res.status == 200) {
+          setbooks([...body])
+        }
+        else {
+          if (body.messages) setmessage(body.messages.join('\n'))
+          else setmessage('Something went wrong')
+        }
+      })
+  }
+
   return (
     <LibraryPage>
-      <screen>
-        <div className="flex items-center justify-between">
-          <div className="text-4xl font-bold">
-            the<br />library.
+      <LibraryNavBar onEnter={(input) => {
+        router.push({
+          pathname: '/',
+          query: {
+            s: input.replace(" ", "+")  // update the query param
+          }
+        }, undefined, { shallow: true })
+        search(input)
+      }} />
+      <section className="flex h-screen mt-5">
+        <div className="lg:w-30 md:w-20"></div>
+        <div className="flex flex-col">
+          {books.length > 0 && <div className="py-5">
+            <p className="text-3xl font-bold">Results</p>
+            <p className="text-md text-library-text text-opacity-60">Click a book to view details</p>
+          </div>}
+          <div className="flex flex-col gap-10">
+            {books.map(b => (<LibraryBookItem key={b.isbn + b.Authors.map(ba => ba.name).join(',') + (new Date()).toDateString()} Book={b} Author={b.Authors} available />))}
           </div>
-          <SearchBar className="relative" placeholder="Search by Book Title, Author, or ISBN" />
-          <LibraryButton text="Login">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-            </svg>
-          </LibraryButton>
         </div>
-
-
-        <section className="flex h-screen mt-5">
-          <div className="lg:w-30 md:w-20"></div>
-          <div className="flex flex-col">
-            <div className="py-5">
-              <p className="text-3xl font-bold">Results</p>
-              <p className="text-md text-library-text text-opacity-60">Click a book to view details</p>
-            </div>
-            <div className="flex flex-col gap-10">
-              <LibraryBookItem />
-              <LibraryBookItem />
-              <LibraryBookItem />
-            </div>
-          </div>
-
-        </section>
-
-
-      </screen>
+      </section>
     </LibraryPage>
   )
 }

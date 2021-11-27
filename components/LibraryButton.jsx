@@ -3,13 +3,15 @@ import LibrarySheet from './LibrarySheet'
 
 export default function LibraryButton({ children, text, onClick }) {
     return (
-        <LibrarySheet onClick={onClick}>
-            <div className="flex gap-2">
-                {children}
-                <div className="text-base font-medium">
-                    {text}
+        <button onClick={onClick}>
+            <LibrarySheet>
+                <div className="flex gap-2">
+                    {children}
+                    <div className="text-base font-medium">
+                        {text}
+                    </div>
                 </div>
-            </div>
-        </LibrarySheet>
+            </LibrarySheet>
+        </button>
     )
 }

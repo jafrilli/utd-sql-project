@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
+export const fetcher = url => fetch(url).then(res => res.json())
+
+export const CARD_ID = "cardId"
 
 export function isMissingBody(req: NextApiRequest, res: NextApiResponse, required: string[]): boolean {
     const query = Object.keys(req.body)
@@ -14,7 +17,7 @@ export function isMissingBody(req: NextApiRequest, res: NextApiResponse, require
     if (missing.length > 0) {
         res.status(400).json({
             missing,
-            message: "You have not provided the following the request body: " + missing.join(", ")
+            messages: ["You have not provided the following the request body: " + missing.join(", ")]
         })
     }
 
@@ -34,7 +37,7 @@ export function isMissingParams(req: NextApiRequest, res: NextApiResponse, requi
     if (missing.length > 0) {
         res.status(400).json({
             missing,
-            message: "You have not provided the following the query parameters: " + missing.join(", ")
+            messages: ["You have not provided the following the query parameters: " + missing.join(", ")]
         })
     }
 

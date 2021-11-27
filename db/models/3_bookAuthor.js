@@ -10,7 +10,7 @@
 const { Model, DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-    class BookAuthor extends Model {}
+    class BookAuthor extends Model { }
     BookAuthor.init({
         authorId: {
             type: DataTypes.INTEGER,
@@ -32,8 +32,10 @@ module.exports = (sequelize) => {
         },
     }, { sequelize, timestamps: false })
 
-    BookAuthor.belongsTo(sequelize.models.Book, {foreignKey: "Isbn"})
-    BookAuthor.belongsTo(sequelize.models.Author, {foreignKey: "Author_id"})
+    BookAuthor.belongsTo(sequelize.models.Book, { foreignKey: "Isbn" })
+    BookAuthor.belongsTo(sequelize.models.Author, { foreignKey: "Author_id" })
+    sequelize.models.Book.hasMany(BookAuthor, { foreignKey: 'Isbn' })
+    sequelize.models.Author.hasMany(BookAuthor, { foreignKey: 'Author_id' })
 
     return BookAuthor
 }

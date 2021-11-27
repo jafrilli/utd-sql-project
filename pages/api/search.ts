@@ -18,27 +18,43 @@ const handler: NextApiHandler = async (req, res) => {
 const search = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!isMissingParams(req, res, ["s", "page", "amount"])) {
         const { s, page, amount } = req.query;
-        const results = await sequelize.models.BookAuthor.findAll({
-            attributes: [],
+        const results = await sequelize.models.Book.findAll({
             include: [
                 {
-                    model: sequelize.models.Book,
+                    model: sequelize.models.BookAuthor,
                     required: true,
-                },
-                {
-                    model: sequelize.models.Author,
-                    required: true,
+                    include: sequelize.models.Author,
+                    attributes: ["authorId"],
                 },
             ],
         });
 
         const options = {
-            keys: ["Book.isbn", "Book.title", "Author.name"],
+            keys: ["isbn", "title", "BookAuthors.Author.name"],
         };
         const fuse = new Fuse(results, options);
-        const start = (parseInt(page.toString())-1)*parseInt(amount.toString())
-        const end = (parseInt(page.toString()))*parseInt(amount.toString())
-        res.status(200).json(fuse.search(s.toString()).slice(start, end))
+        const start =
+            (parseInt(page.toString()) - 1) * parseInt(amount.toString());
+        const end = parseInt(page.toString()) * parseInt(amount.toString());
+
+        // manually format the results cuz sequelize being ass rn 
+        // (constant time cuz we're only formatting 'amount' books)
+        const books = fuse
+            .search(s.toString())
+            .slice(start, end)
+            .map((b) => b.item as any)
+            .map((b) => {
+                return {
+                    isbn: b.isbn,
+                    title: b.title,
+                    Authors: b.BookAuthors.map((ba) => {
+                        return {
+                            ...ba.Author.dataValues,
+                        };
+                    }),
+                };
+            });
+        res.status(200).json(books);
     }
 };
 

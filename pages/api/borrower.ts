@@ -1,6 +1,6 @@
 import { isMissingBody, isMissingParams } from "lib/utils";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-const sequelize = require('../../db/index')
+const sequelize = require("../../db/index");
 
 const handler: NextApiHandler = async (req, res) => {
     switch (req.method) {
@@ -12,8 +12,9 @@ const handler: NextApiHandler = async (req, res) => {
             break;
         default:
             res.status(400).json({
-                messages:
-                    [req.method + " is not a valid method for this endpoint."],
+                messages: [
+                    req.method + " is not a valid method for this endpoint.",
+                ],
             });
     }
 };
@@ -24,12 +25,13 @@ const getBorrower = async (req: NextApiRequest, res: NextApiResponse) => {
         // get borrower given card id
         const borrower = await sequelize.models.Borrower.findOne({
             where: { cardId: cardId.toString() },
-        })
+        });
 
-        if(borrower)
-            res.status(200).json(borrower);
+        if (borrower) res.status(200).json(borrower);
         else
-            res.status(400).json({ messages: ["Unable to find borrower with cardId " + cardId] })    
+            res.status(400).json({
+                messages: ["Unable to find borrower with cardId " + cardId],
+            });
     }
 };
 
@@ -46,7 +48,9 @@ const postBorrower = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             res.status(200).json(borrower);
         } catch (e) {
-            res.status(400).json({ messages: e.errors.map(e => e.message) })
+            const messages = (e.errors ?? []).map((e) => e.message);
+            if (e.original) messages.push(e.original.sqlMessage);
+            res.status(400).json({ messages });
         }
     }
 };

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@types/sequelize": "^4.28.10",
+    "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "fuse.js": "^6.4.6",
     "mysql2": "^2.3.3",
@@ -20,7 +21,8 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "sequelize": "^6.9.0",
-    "serverless-mysql": "^1.5.4"
+    "serverless-mysql": "^1.5.4",
+    "swr": "^1.0.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.31",
