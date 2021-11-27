@@ -9,7 +9,13 @@ module.exports = {
       colors: {
         'library-bg': '#FDE8C1',
         'library-text': '#AD6802',
-      }
+      },
+      height: {
+         sm: '16px',
+         md: '24px',
+         lg: '48px',
+         xl: '2300px',
+              }
     },
   },
   variants: {
