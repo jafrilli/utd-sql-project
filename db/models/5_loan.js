@@ -58,6 +58,7 @@ module.exports = (sequelize) => {
     }, { sequelize, timestamps: false })
 
     Loan.belongsTo(sequelize.models.Book, { foreignKey: "Isbn" })
+    sequelize.models.Book.hasMany(Loan, { foreignKey: "Isbn" })
 
     Loan.getBookLoans = (isbn) => {
         return Loan.findAll({ where: { isbn } })

@@ -28,6 +28,12 @@ const getBook = async (req: NextApiRequest, res: NextApiResponse) => {
                     include: sequelize.models.Author,
                     attributes: ["authorId"],
                 },
+                {
+                    model: sequelize.models.Loan,
+                    required: false,
+                    where: { dateIn: null },
+                    attributes: { exclude: ["Isbn", "isbn"] },
+                },
             ],
         });
 
@@ -40,6 +46,7 @@ const getBook = async (req: NextApiRequest, res: NextApiResponse) => {
                         ...ba.Author.dataValues,
                     };
                 }),
+                Loans: b.Loans,
             });
         else
             res.status(400).json({

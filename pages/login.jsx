@@ -62,9 +62,6 @@ export default function Login() {
           <p className="text-red-500">{message}</p>
 
         </form>
-
-        <h2 className="text-lg text-center font-bold mt-64 text-library-text">Librarian Portal</h2>
-
       </div>
 
     </div>

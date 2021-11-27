@@ -27,7 +27,15 @@ const getBorrower = async (req: NextApiRequest, res: NextApiResponse) => {
             where: { cardId: cardId.toString() },
         });
 
-        if (borrower) res.status(200).json(borrower);
+        const loans = await sequelize.models.Loan.getActiveBorrowerLoans(
+            cardId.toString()
+        );
+
+        if (borrower)
+            res.status(200).json({
+                ...borrower.dataValues,
+                Loans: loans ?? [],
+            });
         else
             res.status(400).json({
                 messages: ["Unable to find borrower with cardId " + cardId],

@@ -17,24 +17,28 @@ const handler: NextApiHandler = async (req, res) => {
 };
 
 const postPay = async (req: NextApiRequest, res: NextApiResponse) => {
-    if (!isMissingBody(req, res, ["loanId"])) {
-        const { loanId } = req.body;
+    if (!isMissingBody(req, res, ["loanIds"])) {
+        const { loanIds } = req.body;
         const messages = [];
         try {
-            // get fine for that loan, update to indicate it is paid
-            let fine = await sequelize.models.Fine.findByPk(loanId.toString());
+            const fines = []
+            for(const loanId of loanIds) {
+                // get fine for that loan, update to indicate it is paid
+                let fine = await sequelize.models.Fine.findByPk(loanId.toString());
 
-            if (!fine)
-                messages.push(`There is no fine linked to loan id ${loanId}`);
-            if (messages.length > 0) res.status(400).json({ messages });
+                if (!fine)
+                    messages.push(`There is no fine linked to loan id ${loanId}`);
+                if (messages.length > 0) {res.status(400).json({ messages }); return}
 
-            else {
-                fine = await sequelize.models.Fine.update(
-                    { paid: true },
-                    { where: { loanId: loanId.toString() } }
-                );
-                res.status(200).json({ fine });
+                else {
+                    fine = await sequelize.models.Fine.update(
+                        { paid: true },
+                        { where: { loanId: loanId.toString() } }
+                    );
+                    fines.push(fine)
+                }
             }
+            res.status(200).json({ fines })
         } catch (e) {
             console.log(e);
             res.status(400).json({

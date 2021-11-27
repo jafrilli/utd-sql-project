@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import LibraryPage from '../components/LibraryPage'
-import LibraryBookItem from '../components/LibraryBookItem'
+import { LibraryBookSearchItem } from '../components/LibraryBookItem'
 import LibraryNavBar from '../components/LibraryNavBar'
 
 export default function Home() {
@@ -51,12 +51,14 @@ export default function Home() {
       <section className="flex h-screen mt-5">
         <div className="lg:w-30 md:w-20"></div>
         <div className="flex flex-col">
-          {books.length > 0 && <div className="py-5">
+          {books.length > 0 ? <div className="py-5">
             <p className="text-3xl font-bold">Results</p>
-            <p className="text-md text-library-text text-opacity-60">Click a book to view details</p>
+            <p className="text-md text-library-text text-opacity-60">Select an available book to checkout</p>
+          </div> : <div className="py-5">
+            <p className="text-3xl font-bold">Search for something above ^</p>
           </div>}
           <div className="flex flex-col gap-10">
-            {books.map(b => (<LibraryBookItem key={b.isbn + b.Authors.map(ba => ba.name).join(',') + (new Date()).toDateString()} Book={b} Author={b.Authors} available />))}
+            {books.map(b => (<LibraryBookSearchItem key={b.isbn} isbn={b.isbn} />))}
           </div>
         </div>
       </section>

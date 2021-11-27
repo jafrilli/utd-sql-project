@@ -30,7 +30,6 @@ const getFines = async (req: NextApiRequest, res: NextApiResponse) => {
                     },
                     {
                         model: sequelize.models.Fine,
-                        where: { paid: false },
                         required: true,
                     },
                 ],
