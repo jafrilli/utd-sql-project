@@ -17,6 +17,7 @@ export function LibraryBookSearchItem({ isbn }) {
                 <div className="flex flex-col px-7 py-3">
                     <p className="text-2xl font-medium">{data.title}</p>
                     <p className="text-library-text text-opacity-50 text-md">by {(data.Authors ?? []).map(a => a.name).join(', ')}</p>
+                    <p className="text-library-text text-opacity-50 text-md">ISBN: {isbn}</p>
                     <div className="flex-grow"></div>
                     {/* the bottom grid */}
                     {(data.Loans ? (data.Loans.length > 0 ? <LibraryBookSearchItemUnavailable data={data} /> : <LibraryBookSearchItemAvailable data={data} />) : [])}
@@ -126,6 +127,7 @@ export function LibraryBookBorrowerItem({ isbn }) {
                 <div className="flex flex-col px-7 py-3">
                     <div onClick={checkin}><p className="text-2xl font-medium underline">{data.title}</p></div>
                     <p className="text-library-text text-opacity-50 text-md">by {(data.Authors ?? []).map(a => a.name).join(', ')}</p>
+                    <p className="text-library-text text-opacity-50 text-md">ISBN: {isbn}</p>
                     <div className="flex-grow"></div>
                     {/* the bottom grid */}
                     <div className="flex-grow flex gap-7 items-center">

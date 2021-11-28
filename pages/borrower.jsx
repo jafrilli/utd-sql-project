@@ -99,7 +99,7 @@ export default function Borrower() {
                             )
                         })}
                     </div>
-                    <div className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-7">
                         <div>
                             <p className="text-3xl font-bold">Books Out ({data[0].Loans.length})</p>
                             <p className="text-md text-library-text text-opacity-60">Click a book to check it in</p>
